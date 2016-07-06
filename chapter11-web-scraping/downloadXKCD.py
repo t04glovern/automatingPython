@@ -24,14 +24,18 @@ while not url.endswith('#'):        # the first comic's prev ends with '#'
         comicUrl = 'http:' + comicElem[0].get('src')
 
         # Download the image.
-        print('Downloading image %s...' % (comicUrl))
+        print('Downloading image %s...' % comicUrl)
         res = requests.get(comicUrl)
         res.raise_for_status()
 
         # Get comic number
         if first:           # I told you I wasn't smart
             first = False
-            comicNumber = 'latest'
+            prevNum = soup.select('a[rel="prev"]')[0]
+            prevNumVal = prevNum.get('href')
+            comicNum = re.compile(r'/(\d)(\d)?(\d)?(\d)?/')
+            cn1 = comicNum.search(prevNumVal)
+            comicNumber = cn1.group(1) + cn1.group(2) + cn1.group(3) + cn1.group(4)
         else:
             comicNum = re.compile(r'/(\d)(\d)?(\d)?(\d)?')
             cn1 = comicNum.search(url)
